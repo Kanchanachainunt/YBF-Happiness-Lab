@@ -671,6 +671,10 @@ function exportCardAsImage() {
   const exportImg = document.getElementById("export-kid-image");
   exportImg.src = card.image;
 
+  // Randomly select one of 4 Taejai mascot cat images
+  const randomCatNum = Math.floor(Math.random() * 4) + 1;
+  document.getElementById("export-random-cat").src = `assets/cat_${randomCatNum}.png`;
+
   // Let DOM update and trigger html2canvas
   setTimeout(() => {
     const container = document.getElementById("export-container");

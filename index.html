@@ -405,7 +405,7 @@
     <!-- Header: Logos & Campaign Logo -->
     <div class="flex flex-col items-center gap-6">
       <!-- White card container for 3 organization logos - extended to the top edge (Soft Shadow) -->
-      <div class="bg-white rounded-b-3xl px-10 py-5 flex flex-col items-center gap-2 -mt-16" style="box-shadow: 0 10px 40px -10px rgba(61, 49, 48, 0.15); border-bottom: 1px solid rgba(61, 49, 48, 0.05); border-left: 1px solid rgba(61, 49, 48, 0.03); border-right: 1px solid rgba(61, 49, 48, 0.03);">
+      <div class="bg-white rounded-b-3xl px-10 py-5 flex flex-col items-center gap-2 -mt-16" style="box-shadow: 0 10px 45px -12px rgba(61, 49, 48, 0.12); border-bottom: 1px solid rgba(61, 49, 48, 0.05); border-left: 1px solid rgba(61, 49, 48, 0.03); border-right: 1px solid rgba(61, 49, 48, 0.03);">
         <span class="text-[12px] text-warm-800/40 font-bold uppercase tracking-wider">ร่วมส่งความสุขโดย</span>
         <div class="flex items-center justify-center gap-6">
           <img src="assets/logo-taejai.png" class="h-10 object-contain">
@@ -421,15 +421,15 @@
     <!-- Middle: Two Cards Side-by-Side -->
     <div class="grid grid-cols-2 gap-12 w-full px-4 items-stretch">
       <!-- Left Card: User Happiness Card -->
-      <div class="notebook-paper p-10 relative h-full flex flex-col min-h-[680px]" style="box-shadow: 0 15px 50px -15px rgba(61, 49, 48, 0.18); border: 1px solid rgba(61, 49, 48, 0.03);">
+      <div class="notebook-paper p-10 relative h-full flex flex-col min-h-[680px]" style="box-shadow: 0 15px 55px -15px rgba(61, 49, 48, 0.15); border: 1px solid rgba(61, 49, 48, 0.03);">
         <div class="masking-tape" style="width: 120px; height: 30px; top: -15px;"></div>
         <div class="notebook-red-line" style="left: 3.5rem;"></div>
         <h3 class="text-xl font-bold text-warm-800 border-b border-warm-200/40 pb-4 mb-4 text-center">
-          ความสุขของ<span class="circle-highlight">ฉัน</span>ในวันนี้
+          ความสุขของ<span class="circle-highlight" style="padding-top: 0.1em; padding-bottom: 0.15em;">ฉัน</span>ในวันนี้
         </h3>
-        <div class="text-base font-bold text-warm-800/80 mb-2 font-title flex items-baseline gap-1">
+        <div class="text-base font-bold text-warm-800/80 mb-2 font-title flex items-baseline gap-1" style="margin-bottom: 8px;">
           <span>ความสุขของคุณ</span>
-          <span class="border-b border-dotted border-warm-800/40 px-2 text-primary font-hand text-2xl grow text-center export-user-name" style="transform: translateY(-4px); margin-bottom: 2px;">คุณ</span>
+          <span class="border-b border-dotted border-warm-800/40 px-2 text-primary font-hand text-2xl grow text-center export-user-name" style="transform: translateY(2px); padding-bottom: 2px;">คุณ</span>
         </div>
         <div class="notebook-content text-xl leading-9 export-user-story" style="padding-left: 2rem;">
           <!-- User story text -->
@@ -437,21 +437,21 @@
       </div>
 
       <!-- Right Card: Kid Happiness Card -->
-      <div class="notebook-paper p-10 relative h-full flex flex-col min-h-[680px]" style="box-shadow: 0 15px 50px -15px rgba(61, 49, 48, 0.18); border: 1px solid rgba(61, 49, 48, 0.03);">
+      <div class="notebook-paper p-10 relative h-full flex flex-col min-h-[680px]" style="box-shadow: 0 15px 55px -15px rgba(61, 49, 48, 0.15); border: 1px solid rgba(61, 49, 48, 0.03);">
         <div class="masking-tape" style="width: 120px; height: 30px; top: -15px;"></div>
         <div class="notebook-red-line" style="left: 3.5rem;"></div>
         <h3 class="text-xl font-bold text-warm-800 border-b border-warm-200/40 pb-4 mb-4 text-center">
-          ความสุขของ<span class="circle-highlight">หนู</span>
+          ความสุขของ<span class="circle-highlight" style="padding-top: 0.1em; padding-bottom: 0.15em;">หนู</span>
         </h3>
         <!-- Image Box -->
         <div class="relative w-48 h-48 mx-auto mb-6 border border-warm-200 shadow-sm rounded-lg overflow-hidden bg-white">
           <div class="masking-tape-image" style="width: 70px; height: 20px; top: -10px;"></div>
           <img id="export-kid-image" src="" class="w-full h-full object-cover">
         </div>
-        <div class="text-base font-bold text-warm-800/80 mb-2 font-title flex items-baseline gap-1">
+        <div class="text-base font-bold text-warm-800/80 mb-2 font-title flex items-baseline gap-1" style="margin-bottom: 8px;">
           <span id="export-kid-title" class="text-primary font-semibold">ชื่อการ์ด</span>
           <span class="text-xs text-warm-800/50">ของน้อง</span>
-          <span id="export-kid-name" class="border-b border-dotted border-warm-800/40 px-2 text-primary font-hand text-2xl grow text-center" style="transform: translateY(-4px); margin-bottom: 2px;">ชื่อน้อง</span>
+          <span id="export-kid-name" class="border-b border-dotted border-warm-800/40 px-2 text-primary font-hand text-2xl grow text-center" style="transform: translateY(2px); padding-bottom: 2px;">ชื่อน้อง</span>
         </div>
         <div id="export-kid-reason" class="notebook-content text-xl leading-9" style="padding-left: 2rem;">
           <!-- Kid story text -->
@@ -473,11 +473,16 @@
         </div>
       </div>
       
-      <!-- Right Side: Hashtags and Credits -->
-      <div class="flex flex-col text-right justify-center gap-1.5 py-1">
-        <span class="text-[14px] font-bold text-primary tracking-wide">#เปิดห้องทดลองความสุข</span>
-        <span class="text-[14px] font-bold text-primary tracking-wide">#เทใจให้น้อง</span>
-        <span class="text-[11px] font-normal text-warm-800/40 mt-1">Created by So(ul) Happy Team</span>
+      <!-- Right Side: Random Taejai Cat & Hashtags -->
+      <div class="flex flex-row items-center gap-4 py-1">
+        <!-- Random Cat Image Element -->
+        <img id="export-random-cat" src="assets/cat_1.png" class="h-28 w-28 object-contain flex-shrink-0">
+        
+        <div class="flex flex-col text-right justify-center gap-1">
+          <span class="text-[14px] font-bold text-primary tracking-wide">#เปิดห้องทดลองความสุข</span>
+          <span class="text-[14px] font-bold text-primary tracking-wide">#เทใจให้น้อง</span>
+          <span class="text-[11px] font-normal text-warm-800/40 mt-1">Created by So(ul) Happy Team</span>
+        </div>
       </div>
     </div>
   </div>
