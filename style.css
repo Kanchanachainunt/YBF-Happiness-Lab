@@ -81,6 +81,12 @@ h1, h2, h3, h4, .font-title {
   z-index: -1;
 }
 
+/* Kid Card Highlight Circle Override - Shifted lower */
+.circle-highlight-export.kid-circle::after {
+  top: 0.44em;
+  bottom: -0.44em;
+}
+
 /* Notebook Paper Card Style */
 .notebook-paper {
   background-color: #FCFBF7;
