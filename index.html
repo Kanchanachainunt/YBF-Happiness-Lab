@@ -336,7 +336,7 @@
         <div class="flex flex-col items-center gap-5 w-full">
           <!-- QR Code -->
           <div class="p-3 bg-white rounded-2xl shadow-sm border border-warm-200 max-w-[160px]">
-            <img src="assets/qr_code.png" alt="QR Code Taejai Yuwaphat" class="w-32 h-32 object-contain">
+            <img src="assets/qr_code.png?v=2.2" alt="QR Code Taejai Yuwaphat" class="w-32 h-32 object-contain">
           </div>
 
           <!-- Buttons Layout (Side-by-side) -->
@@ -402,15 +402,20 @@
 
   <!-- Hidden Element for exporting 1080x1350 card pair -->
   <div id="export-container" style="position: absolute; left: -9999px; top: -9999px; width: 1080px; height: 1350px; background-image: url('assets/crumpled_paper.jpg'); background-size: cover; background-position: center; font-family: 'IBM Plex Sans Thai', sans-serif;" class="flex flex-col justify-between p-16 text-warm-900 select-none bg-white">
-    <!-- Header: Logos & Title -->
-    <div class="flex flex-col items-center gap-4">
-      <span class="text-[12px] text-warm-800/40 font-bold uppercase tracking-wider">ร่วมส่งความสุขโดย</span>
-      <div class="flex items-center justify-center gap-6">
-        <img src="assets/logo-taejai.png" class="h-12 object-contain">
-        <img src="assets/logo-sol.png" class="h-20 object-contain">
-        <img src="assets/logo-yuwaphat.png" class="h-12 object-contain">
+    <!-- Header: Logos & Campaign Logo -->
+    <div class="flex flex-col items-center gap-6">
+      <!-- White card container for 3 organization logos -->
+      <div class="bg-white rounded-2xl px-8 py-3.5 shadow-sm border border-warm-200/50 flex flex-col items-center gap-1.5 -mt-6">
+        <span class="text-[12px] text-warm-800/40 font-bold uppercase tracking-wider">ร่วมส่งความสุขโดย</span>
+        <div class="flex items-center justify-center gap-6">
+          <img src="assets/logo-taejai.png" class="h-10 object-contain">
+          <img src="assets/logo-sol.png" class="h-16 object-contain">
+          <img src="assets/logo-yuwaphat.png?v=2.2" class="h-10 object-contain">
+        </div>
       </div>
-      <h2 class="text-3xl font-bold text-center mt-4 text-warm-800 font-title">เปิดห้องทดลองความสุข — The Happiness Lab</h2>
+      
+      <!-- Moved campaign logo replacing text, made 2x larger -->
+      <img src="assets/footer_logo.png?v=2.1" class="h-44 object-contain mt-2">
     </div>
 
     <!-- Middle: Two Cards Side-by-Side -->
@@ -454,24 +459,22 @@
       </div>
     </div>
 
-    <!-- Footer: QR Code & Campaign Logo -->
+    <!-- Footer: QR Code & Spacing -->
     <div class="flex flex-row items-center justify-between px-10 pt-4 border-t border-warm-200/50">
-      <!-- QR Code info -->
-      <div class="flex items-center gap-4">
-        <div class="p-2 bg-white rounded-xl shadow-sm border border-warm-200">
-          <img src="assets/qr_code.png" class="w-24 h-24 object-contain">
+      <!-- QR Code info (Slightly larger layout) -->
+      <div class="flex items-center gap-6">
+        <div class="p-3 bg-white rounded-2xl shadow-sm border border-warm-200">
+          <img src="assets/qr_code.png?v=2.2" class="w-32 h-32 object-contain">
         </div>
-        <div class="flex flex-col text-left">
-          <span class="text-[12px] font-bold text-warm-800/40 tracking-wider">SCAN TO PLAY</span>
-          <span class="text-[14px] font-semibold text-warm-800">ร่วมส่งต่อความสุขให้น้องๆ ยุวพัฒน์</span>
-          <span class="text-[11px] text-warm-800/50">ybf-happiness-lab.vercel.app</span>
+        <div class="flex flex-col text-left gap-1">
+          <span class="text-[14px] font-bold text-warm-800/40 tracking-wider">SCAN TO PLAY</span>
+          <span class="text-[18px] font-semibold text-warm-800 leading-snug">ร่วมส่งต่อความสุขให้น้องๆ ยุวพัฒน์</span>
+          <span class="text-[13px] text-warm-800/50">ybf-happiness-lab.vercel.app</span>
         </div>
       </div>
       
-      <!-- Campaign Logo Transparent PNG -->
-      <div class="flex items-end">
-        <img src="assets/footer_logo.png" class="h-24 object-contain">
-      </div>
+      <!-- Blank right side to keep QR Code on the bottom left -->
+      <div></div>
     </div>
   </div>
 
