@@ -58,6 +58,21 @@ h1, h2, h3, h4, .font-title {
   z-index: -1;
 }
 
+/* Circle Highlight for Export Layout (shifted lower) */
+.circle-highlight-export::after {
+  content: "";
+  position: absolute;
+  left: -0.1em;
+  top: 0.18em;
+  right: -0.1em;
+  bottom: -0.22em;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 42" preserveAspectRatio="none"><path d="M6,21 C12,6 88,4 94,19 C98,31 66,38 34,39 C14,40 2,31 7,16" stroke="%23FF9F1C" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="300" stroke-dashoffset="300"><animate attributeName="stroke-dashoffset" values="300;0" dur="0.8s" fill="freeze" /></path></svg>');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: -1;
+}
+
 /* Notebook Paper Card Style */
 .notebook-paper {
   background-color: #FCFBF7;
