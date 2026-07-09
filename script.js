@@ -640,3 +640,60 @@ function resetLab() {
 
   goToScreen(3);
 }
+
+// 4. Export Card Pair as a 1080x1350 Image
+function exportCardAsImage() {
+  const card = gameState.selectedCard;
+  if (!card) {
+    alert("ยังไม่ได้เลือกการ์ดของน้องค่ะ ไม่สามารถดาวน์โหลดภาพได้");
+    return;
+  }
+
+  // Show loading indicator
+  const exportBtn = document.querySelector("button[title*='ดาวน์โหลดรูปภาพ']");
+  const originalHtml = exportBtn.innerHTML;
+  exportBtn.innerHTML = `
+    <svg class="w-4 h-4 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+    </svg>
+  `;
+  exportBtn.setAttribute("disabled", "true");
+
+  // Populate hidden export elements
+  document.querySelector("#export-container .export-user-name").innerText = gameState.userProfile.name || "คุณ";
+  document.querySelector("#export-container .export-user-story").innerText = gameState.userHappinessText || "";
+  
+  document.getElementById("export-kid-name").innerText = card.owner || "";
+  document.getElementById("export-kid-title").innerText = card.title || "";
+  document.getElementById("export-kid-reason").innerText = card.reason || "";
+  
+  const exportImg = document.getElementById("export-kid-image");
+  exportImg.src = card.image;
+
+  // Let DOM update and trigger html2canvas
+  setTimeout(() => {
+    const container = document.getElementById("export-container");
+    
+    html2canvas(container, {
+      scale: 2, // High resolution scale
+      useCORS: true,
+      allowTaint: true,
+      logging: false,
+      backgroundColor: "#FCFBF7"
+    }).then(canvas => {
+      const link = document.createElement("a");
+      link.download = `happiness_card_${card.owner}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+      
+      exportBtn.innerHTML = originalHtml;
+      exportBtn.removeAttribute("disabled");
+    }).catch(err => {
+      console.error("Export failed:", err);
+      alert("ดาวน์โหลดรูปภาพไม่สำเร็จ กรุณาลองใหม่อีกครั้งค่ะ");
+      exportBtn.innerHTML = originalHtml;
+      exportBtn.removeAttribute("disabled");
+    });
+  }, 300);
+}
