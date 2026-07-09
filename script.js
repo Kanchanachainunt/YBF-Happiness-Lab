@@ -365,6 +365,11 @@ function goToScreen(screenNum) {
     targetScreen.classList.remove("opacity-0", "translate-y-4");
     targetScreen.classList.add("fade-in-up");
 
+    // Send event to Vercel Web Analytics
+    if (window.va) {
+      window.va('event', { name: 'reach_screen', data: { screen: screenNum } });
+    }
+
     // Handle screen-specific dynamic scripts/loading
     if (screenNum === 4) {
       runAnalysisSimulation();
@@ -601,6 +606,9 @@ const shareUrl = "https://ybf-happiness-lab.vercel.app";
 
 // 1. Copy link to clipboard
 function copyShareLink() {
+  if (window.va) {
+    window.va('event', { name: 'click_share', data: { method: 'copy_link' } });
+  }
   const dummyInput = document.createElement("textarea");
   document.body.appendChild(dummyInput);
   dummyInput.value = `${shareText}\n\nร่วมกิจกรรมได้ที่: ${shareUrl}`;
@@ -613,12 +621,18 @@ function copyShareLink() {
 
 // 2. Share on Facebook
 function shareFacebook() {
+  if (window.va) {
+    window.va('event', { name: 'click_share', data: { method: 'facebook' } });
+  }
   const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
   window.open(fbUrl, '_blank', 'width=600,height=400');
 }
 
 // 3. Share on LINE
 function shareLine() {
+  if (window.va) {
+    window.va('event', { name: 'click_share', data: { method: 'line' } });
+  }
   const lineUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
   window.open(lineUrl, '_blank', 'width=600,height=500');
 }
@@ -647,6 +661,10 @@ function exportCardAsImage() {
   if (!card) {
     alert("ยังไม่ได้เลือกการ์ดของน้องค่ะ ไม่สามารถดาวน์โหลดภาพได้");
     return;
+  }
+
+  if (window.va) {
+    window.va('event', { name: 'export_image', data: { kid_owner: card.owner } });
   }
 
   // Show loading indicator
