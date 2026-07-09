@@ -597,7 +597,7 @@ function runAnalysisSimulation() {
 // Share function
 // Share functions
 const shareText = `ฉันได้เข้าร่วม "เปิดห้องทดลองความสุข" และได้แชร์เรื่องราวความสุขเชื่อมโยงกับน้องๆ ยุวพัฒน์ มาร่วมแบ่งปันความสุขและช่วยเหลือการศึกษากับมูลนิธิยุวพัฒน์และเทใจด้วยกันนะ 🧡`;
-const shareUrl = "https://taejai.com/th/project/chd-scholarship-ybf?utm_source=web&utm_medium=organic&utm_campaign=sol";
+const shareUrl = "https://ybf-happiness-lab.vercel.app";
 
 // 1. Copy link to clipboard
 function copyShareLink() {
