@@ -379,3 +379,9 @@ h1, h2, h3, h4, .font-title {
   height: 12px !important;
   top: -5px !important;
 }
+
+/* Hide disclaimer text in small stacked copies (Screens 7-9) and final Screen 10 */
+[id^="stacked-kid-card-"] .kid-card-disclaimer,
+#screen-10-kid-card-placeholder .kid-card-disclaimer {
+  display: none !important;
+}
