@@ -655,6 +655,13 @@ function resetLab() {
   goToScreen(3);
 }
 
+// View other cards from current matches
+function viewOtherCards() {
+  gameState.selectedCard = null;
+  renderMatchGrid();
+  goToScreen(5);
+}
+
 // 4. Export Card Pair as a 1080x1350 Image
 function exportCardAsImage() {
   const card = gameState.selectedCard;
