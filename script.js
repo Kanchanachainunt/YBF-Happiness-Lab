@@ -137,149 +137,167 @@ function loadDatabase() {
   const sheetUrl = 'https://docs.google.com/spreadsheets/d/1Ke30Rub6xYhTq-qExEU3UcbcUtQSpysZNP16vyH5jL0/export?format=csv';
   const fallbackUrl = 'assets/kids_stories.json';
 
-  fetch(sheetUrl)
-    .then(res => {
-      if (!res.ok) throw new Error("Network response was not ok");
-      return res.text();
-    })
-    .then(csvText => {
-      const rows = parseCSV(csvText);
-      if (rows.length > 0) rows.shift(); // Remove header row
-      
-      kidsHappinessDatabase = rows.map(row => {
-        if (row.length < 4) return null;
-        const no = parseInt(row[0]);
-        const title = row[1];
-        const owner = row[2];
-        const reason = row[3];
-        
-        if (isNaN(no) || !title) return null;
+  // 1. Fetch the local offline JSON database first to build a custom images lookup map
+  fetch(fallbackUrl)
+    .then(res => res.json())
+    .then(localData => {
+      const customImageMap = {};
+      localData.forEach(item => {
+        if (item.image && item.image.includes('/dynamic/')) {
+          customImageMap[item.id] = item.image;
+        }
+      });
 
-        // Semantic Category Classification (on-the-fly)
-        const textToSearch = (title + ' ' + reason).toLowerCase();
-        let cleanText = textToSearch
-          .replace(/หมู่บ้าน/g, '___บ้าน')
-          .replace(/พลาสติก/g, '___สติก')
-          .replace(/ปลาทู/g, '___ทู');
+      // 2. Fetch the Google Sheets CSV data in real-time
+      return fetch(sheetUrl)
+        .then(res => {
+          if (!res.ok) throw new Error("Network response was not ok");
+          return res.text();
+        })
+        .then(csvText => {
+          const rows = parseCSV(csvText);
+          if (rows.length > 0) rows.shift(); // Remove header row
+          
+          kidsHappinessDatabase = rows.map(row => {
+            if (row.length < 4) return null;
+            const no = parseInt(row[0]);
+            const title = row[1];
+            const owner = row[2];
+            const reason = row[3];
+            
+            if (isNaN(no) || !title) return null;
 
-        let category = 'toys';
-        for (const [cat, kws] of Object.entries(categories)) {
-          let matched = false;
-          for (const kw of kws) {
-            if (cleanText.includes(kw)) {
-              category = cat;
-              matched = true;
-              break;
+            // Semantic Category Classification (on-the-fly)
+            const textToSearch = (title + ' ' + reason).toLowerCase();
+            let cleanText = textToSearch
+              .replace(/หมู่บ้าน/g, '___บ้าน')
+              .replace(/พลาสติก/g, '___สติก')
+              .replace(/ปลาทู/g, '___ทู');
+
+            let category = 'toys';
+            for (const [cat, kws] of Object.entries(categories)) {
+              let matched = false;
+              for (const kw of kws) {
+                if (cleanText.includes(kw)) {
+                  category = cat;
+                  matched = true;
+                  break;
+                }
+              }
+              if (matched) break;
             }
-          }
-          if (matched) break;
-        }
 
-        // Keywords expansion for search
-        let extraKeywords = [];
-        if (category === 'drink') extraKeywords = ['กาแฟ', 'คาเฟ่', 'บาริสต้า', 'หวาน', 'ชื่นใจ', 'แก้ว', 'น้ำ', 'ชง', 'โกโก้'];
-        else if (category === 'food') extraKeywords = ['กิน', 'ชวน', 'อร่อย', 'อาหาร', 'จาน', 'มื้อ', 'บุฟเฟต์', 'ชาบู', 'ปิ้งย่าง', 'ข้าว'];
-        else if (category === 'sports') extraKeywords = ['ออกกำลังกาย', 'ฟิตเนส', 'วิ่ง', 'เตะบอล', 'เหนื่อย', 'ปั่นจักรยาน', 'กีฬา', 'สุขภาพ'];
-        else if (category === 'toys') extraKeywords = ['ของเล่น', 'เกม', 'สนุก', 'สะสม', 'เล่นเกม', 'เลโก้', 'การ์ด'];
-        else if (category === 'creative') extraKeywords = ['วาดเขียน', 'ระบายสี', 'ศิลปะ', 'รูปภาพ', 'สมุด', 'ดินสอ', 'สีเทียน'];
-        else if (category === 'family') extraKeywords = ['แฟน', 'ครอบครัว', 'พ่อแม่', 'กอด', 'อบอุ่น', 'รัก', 'เพื่อน'];
-        else if (category === 'nature') extraKeywords = ['ท่องเที่ยว', 'เดินทาง', 'ทะเล', 'ภูเขา', 'วิว', 'คลอง', 'เที่ยว'];
+            // Keywords expansion for search
+            let extraKeywords = [];
+            if (category === 'drink') extraKeywords = ['กาแฟ', 'คาเฟ่', 'บาริสต้า', 'หวาน', 'ชื่นใจ', 'แก้ว', 'น้ำ', 'ชง', 'โกโก้'];
+            else if (category === 'food') extraKeywords = ['กิน', 'ชวน', 'อร่อย', 'อาหาร', 'จาน', 'มื้อ', 'บุฟเฟต์', 'ชาบู', 'ปิ้งย่าง', 'ข้าว'];
+            else if (category === 'sports') extraKeywords = ['ออกกำลังกาย', 'ฟิตเนส', 'วิ่ง', 'เตะบอล', 'เหนื่อย', 'ปั่นจักรยาน', 'กีฬา', 'สุขภาพ'];
+            else if (category === 'toys') extraKeywords = ['ของเล่น', 'เกม', 'สนุก', 'สะสม', 'เล่นเกม', 'เลโก้', 'การ์ด'];
+            else if (category === 'creative') extraKeywords = ['วาดเขียน', 'ระบายสี', 'ศิลปะ', 'รูปภาพ', 'สมุด', 'ดินสอ', 'สีเทียน'];
+            else if (category === 'family') extraKeywords = ['แฟน', 'ครอบครัว', 'พ่อแม่', 'กอด', 'อบอุ่น', 'รัก', 'เพื่อน'];
+            else if (category === 'nature') extraKeywords = ['ท่องเที่ยว', 'เดินทาง', 'ทะเล', 'ภูเขา', 'วิว', 'คลอง', 'เที่ยว'];
 
-        const rawWords = textToSearch.match(/[ก-์a-zA-Z0-9]+/g) || [];
-        const cleanRaw = rawWords.filter(w => w.length > 2);
-        const keywords = Array.from(new Set([title, owner, ...extraKeywords, ...cleanRaw]));
+            const rawWords = textToSearch.match(/[ก-์a-zA-Z0-9]+/g) || [];
+            const cleanRaw = rawWords.filter(w => w.length > 2);
+            const keywords = Array.from(new Set([title, owner, ...extraKeywords, ...cleanRaw]));
 
-        // Select matching image asset (original + 10 new AI-generated child illustrations)
-        let imgPath = 'assets/blocks.jpg'; // Default fallback
-        const searchPool = (title + ' ' + reason).toLowerCase();
-        
-        const hasKeyword = (words) => words.some(w => searchPool.includes(w));
+            // Select matching image asset (original + custom generated child illustrations)
+            let imgPath = '';
+            if (customImageMap[no]) {
+              imgPath = customImageMap[no];
+            } else {
+              imgPath = 'assets/blocks.jpg'; // Default fallback
+              const searchPool = (title + ' ' + reason).toLowerCase();
+              
+              const hasKeyword = (words) => words.some(w => searchPool.includes(w));
 
-        // 1. Beach/Sea/Shells
-        if (hasKeyword(['ทะเล', 'ชายหาด', 'เปลือกหอย', 'บางแสน'])) {
-          imgPath = 'assets/beach.jpg';
-        }
-        // 2. Cycling/Bicycle
-        else if (hasKeyword(['จักรยาน', 'ปั่น'])) {
-          imgPath = 'assets/bicycle.jpg';
-        }
-        // 3. Soccer/Football
-        else if (hasKeyword(['ฟุตบอล', 'เตะบอล', 'เตะลูกบอล', 'ลูกบอล'])) {
-          imgPath = 'assets/soccer.jpg';
-        }
-        // 4. Drawing/Coloring/Pencils
-        else if (hasKeyword(['สีไม้', 'ดินสอสี', 'สีเทียน', 'ระบายสี'])) {
-          imgPath = 'assets/pencils.jpg';
-        }
-        // 5. Drawing books/Sketchbooks/Painting on board
-        else if (hasKeyword(['สมุดวาด', 'วาดเขียน', 'กระดานดำ', 'วาดยักษ์', 'วาดรูป', 'ชอล์ก'])) {
-          imgPath = 'assets/sketchbook.jpg';
-        }
-        // 6. Sweet Treats/Ice Cream/Beverages
-        else if (hasKeyword(['ไอติม', 'ไอศกรีม', 'โกโก้', 'น้ำเก๊กฮวย', 'น้ำอัดลม', 'เฉาก๊วย', 'ชานม', 'สลีป', 'หวาน', 'ชง'])) {
-          imgPath = 'assets/icecream.jpg';
-        }
-        // 7. Toys/Blocks/Legos
-        else if (hasKeyword(['เลโก้', 'ตัวต่อ', 'บล็อกไม้', 'ของเล่น', 'รถบังคับ', 'หุ่นยนต์', 'ของขวัญ'])) {
-          imgPath = 'assets/blocks.jpg';
-        }
-        // 8. Pets/Dogs/Cats
-        else if (hasKeyword(['หมา', 'แมว', 'สุนัข', 'ลูกสุนัข', 'กระดิกหาง', 'เลียหน้า'])) {
-          imgPath = 'assets/dog_cat.jpg';
-        }
-        // 9. Thai Street Food
-        else if (hasKeyword(['ลูกชิ้นทอด', 'โตเกียว', 'ขนมโตเกียว', 'ส้มตำ', 'หมูสะเต๊ะ', 'ข้าวโพด', 'วาฟเฟิล', 'ขนมเบื้อง', 'ทอดมัน', 'โดนัท'])) {
-          imgPath = 'assets/street_food.jpg';
-        }
-        // 10. Family dishes/Mackerel/Home Cooked meals
-        else if (hasKeyword(['ปลาทู', 'แกงจืด', 'ยายแกะ', 'ยายทำ', 'ยายทอด', 'แม่ต้ม', 'ยายต้ม', 'ต้มยำ', 'ข้าวสวย', 'มาม่า', 'บะหมี่'])) {
-          imgPath = 'assets/family_dish.jpg';
-        }
-        // 11. Board games/Cards/Console
-        else if (hasKeyword(['การ์ดยูกิ', 'เกมกด', 'เกมเศรษฐี', 'หมากเก็บ', 'ทอยลูกเต๋า', 'หมากรุก', 'การ์ดของเล่น'])) {
-          imgPath = 'assets/board_game.jpg';
-        }
-        // 12. Bedtime/Blanket/Cozy sleeping
-        else if (hasKeyword(['นิทาน', 'ก่อนนอน', 'ผ้าห่ม', 'นอนหนุนตัก', 'เตียง', 'นอนกอด', 'กอดนอน', 'หนุนตักยาย'])) {
-          imgPath = 'assets/bedtime.jpg';
-        }
-        // 13. School items/Shoes/Uniform
-        else if (hasKeyword(['รองเท้า', 'กระเป๋าใหม่', 'ดินสอกด', 'เครื่องเขียน', 'ดินสอพละ'])) {
-          imgPath = 'assets/school_items.jpg';
-        }
-        // 14. Water playing/Rain/Umbrella/Songkran
-        else if (hasKeyword(['แช่น้ำ', 'เล่นน้ำ', 'คลอง', 'สงกรานต์', 'สาดน้ำ', 'สระน้ำ', 'โดดน้ำ'])) {
-          imgPath = 'assets/rain_umbrella.jpg';
-        }
-        // 15. Bubble soap/Dough playing
-        else if (hasKeyword(['ลูกโป่งวิทยาศาสตร์', 'สบู่ก้อน', 'ดินน้ำมัน', 'เป่าฟอง', 'เป่าลูกโป่ง'])) {
-          imgPath = 'assets/bubble_soap.jpg';
-        }
-        // 16. Kites/Flying adventures/Outdoor climbing
-        else if (hasKeyword(['ปีนต้นไม้', 'วิ่งเล่นว่าว', 'เล่นว่าว', 'ว่าว'])) {
-          imgPath = 'assets/kite_adventure.jpg';
-        }
-        else {
-          imgPath = categoryImages[category];
-        }
+              // 1. Beach/Sea/Shells
+              if (hasKeyword(['ทะเล', 'ชายหาด', 'เปลือกหอย', 'บางแสน'])) {
+                imgPath = 'assets/beach.jpg';
+              }
+              // 2. Cycling/Bicycle
+              else if (hasKeyword(['จักรยาน', 'ปั่น'])) {
+                imgPath = 'assets/bicycle.jpg';
+              }
+              // 3. Soccer/Football
+              else if (hasKeyword(['ฟุตบอล', 'เตะบอล', 'เตะลูกบอล', 'ลูกบอล'])) {
+                imgPath = 'assets/soccer.jpg';
+              }
+              // 4. Drawing/Coloring/Pencils
+              else if (hasKeyword(['สีไม้', 'ดินสอสี', 'สีเทียน', 'ระบายสี'])) {
+                imgPath = 'assets/pencils.jpg';
+              }
+              // 5. Drawing books/Sketchbooks/Painting on board
+              else if (hasKeyword(['สมุดวาด', 'วาดเขียน', 'กระดานดำ', 'วาดยักษ์', 'วาดรูป', 'ชอล์ก'])) {
+                imgPath = 'assets/sketchbook.jpg';
+              }
+              // 6. Sweet Treats/Ice Cream/Beverages
+              else if (hasKeyword(['ไอติม', 'ไอศกรีม', 'โกโก้', 'น้ำเก๊กฮวย', 'น้ำอัดลม', 'เฉาก๊วย', 'ชานม', 'สลีป', 'หวาน', 'ชง'])) {
+                imgPath = 'assets/icecream.jpg';
+              }
+              // 7. Toys/Blocks/Legos
+              else if (hasKeyword(['เลโก้', 'ตัวต่อ', 'บล็อกไม้', 'ของเล่น', 'รถบังคับ', 'หุ่นยนต์', 'ของขวัญ'])) {
+                imgPath = 'assets/blocks.jpg';
+              }
+              // 8. Pets/Dogs/Cats
+              else if (hasKeyword(['หมา', 'แมว', 'สุนัข', 'ลูกสุนัข', 'กระดิกหาง', 'เลียหน้า'])) {
+                imgPath = 'assets/dog_cat.jpg';
+              }
+              // 9. Thai Street Food
+              else if (hasKeyword(['ลูกชิ้นทอด', 'โตเกียว', 'ขนมโตเกียว', 'ส้มตำ', 'หมูสะเต๊ะ', 'ข้าวโพด', 'วาฟเฟิล', 'ขนมเบื้อง', 'ทอดมัน', 'โดนัท'])) {
+                imgPath = 'assets/street_food.jpg';
+              }
+              // 10. Family dishes/Mackerel/Home Cooked meals
+              else if (hasKeyword(['ปลาทู', 'แกงจืด', 'ยายแกะ', 'ยายทำ', 'ยายทอด', 'แม่ต้ม', 'ยายต้ม', 'ต้มยำ', 'ข้าวสวย', 'มาม่า', 'บะหมี่'])) {
+                imgPath = 'assets/family_dish.jpg';
+              }
+              // 11. Board games/Cards/Console
+              else if (hasKeyword(['การ์ดยูกิ', 'เกมกด', 'เกมเศรษฐี', 'หมากเก็บ', 'ทอยลูกเต๋า', 'หมากรุก', 'การ์ดของเล่น'])) {
+                imgPath = 'assets/board_game.jpg';
+              }
+              // 12. Bedtime/Blanket/Cozy sleeping
+              else if (hasKeyword(['นิทาน', 'ก่อนนอน', 'ผ้าห่ม', 'นอนหนุนตัก', 'เตียง', 'นอนกอด', 'กอดนอน', 'หนุนตักยาย'])) {
+                imgPath = 'assets/bedtime.jpg';
+              }
+              // 13. School items/Shoes/Uniform
+              else if (hasKeyword(['รองเท้า', 'กระเป๋าใหม่', 'ดินสอกด', 'เครื่องเขียน', 'ดินสอพละ'])) {
+                imgPath = 'assets/school_items.jpg';
+              }
+              // 14. Water playing/Rain/Umbrella/Songkran
+              else if (hasKeyword(['แช่น้ำ', 'เล่นน้ำ', 'คลอง', 'สงกรานต์', 'สาดน้ำ', 'สระน้ำ', 'โดดน้ำ'])) {
+                imgPath = 'assets/rain_umbrella.jpg';
+              }
+              // 15. Bubble soap/Dough playing
+              else if (hasKeyword(['ลูกโป่งวิทยาศาสตร์', 'สบู่ก้อน', 'ดินน้ำมัน', 'เป่าฟอง', 'เป่าลูกโป่ง'])) {
+                imgPath = 'assets/bubble_soap.jpg';
+              }
+              // 16. Kites/Flying adventures/Outdoor climbing
+              else if (hasKeyword(['ปีนต้นไม้', 'วิ่งเล่นว่าว', 'เล่นว่าว', 'ว่าว'])) {
+                imgPath = 'assets/kite_adventure.jpg';
+              }
+              else {
+                imgPath = categoryImages[category];
+              }
+            }
 
-        return {
-          id: no,
-          title: title,
-          owner: owner,
-          reason: reason,
-          image: imgPath,
-          category: category,
-          categoryLabel: categoryLabels[category],
-          iconName: categoryIcons[category],
-          keywords: keywords
-        };
-      }).filter(item => item !== null);
+            return {
+              id: no,
+              title: title,
+              owner: owner,
+              reason: reason,
+              image: imgPath,
+              category: category,
+              categoryLabel: categoryLabels[category],
+              iconName: categoryIcons[category],
+              keywords: keywords
+            };
+          }).filter(item => item !== null);
 
-      console.log(`Successfully loaded ${kidsHappinessDatabase.length} entries directly from live Google Sheet!`);
+          console.log(`Successfully loaded ${kidsHappinessDatabase.length} entries directly from live Google Sheet merged with custom images!`);
+        });
     })
     .catch(err => {
-      console.warn("Using offline fallback database due to sheet load error:", err);
+      console.warn("Using offline fallback database due to load error:", err);
       fetch(fallbackUrl)
         .then(res => res.json())
         .then(data => {
